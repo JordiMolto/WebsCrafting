@@ -69,6 +69,11 @@ html {
   animation: scroll-bounce 1.6s ease-in-out infinite;
 }
 
+/* Altura de pantalla menos navbar (h-16 = 4rem) */
+.min-h-screen-nav {
+  min-height: calc(100vh - 4rem);
+}
+
 /* Zoom suave por CSS (evita 'escalón') */
 .zoom-on-hover {
   overflow: hidden;

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <!-- Hero Section -->
-    <section class="relative min-h-[100vh] flex items-center">
+    <section class="relative min-h-screen-nav flex items-center">
       <div class="container-xl">
         <div class="text-center">
           <h1 class="text-5xl md:text-7xl font-semibold tracking-tight text-gray-900 mb-6">

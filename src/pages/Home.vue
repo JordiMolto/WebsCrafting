@@ -1,7 +1,21 @@
 <template>
-  <div class="w-full">
+  <div class="w-full relative">
+    <!-- Overlay parallax global para toda la Home -->
+    <div class="pointer-events-none absolute inset-0 z-0">
+      <span class="parallax-item absolute top-10 left-6 text-5xl md:text-6xl opacity-80 select-none" data-speed="0.30">✨</span>
+      <span class="parallax-item absolute top-[520px] right-8 text-6xl md:text-7xl opacity-70 select-none" data-speed="0.45">🚀</span>
+      <span class="parallax-item absolute top-[980px] left-1/5 text-5xl md:text-6xl opacity-80 rotate-12 select-none" data-speed="0.35">🔶</span>
+      <span class="parallax-item absolute top-[1450px] right-1/4 text-7xl md:text-8xl opacity-60 select-none" data-speed="0.25">🟣</span>
+      <span class="parallax-item absolute top-[1900px] left-10 text-6xl md:text-7xl opacity-70 select-none" data-speed="0.40">⭐</span>
+      <!-- Extras -->
+      <span class="parallax-item absolute top-[240px] left-1/2 -translate-x-1/2 text-5xl md:text-6xl opacity-75 select-none" data-speed="0.30">💫</span>
+      <span class="parallax-item absolute top-[760px] left-8 text-6xl md:text-7xl opacity-70 select-none" data-speed="0.50">🟡</span>
+      <span class="parallax-item absolute top-[1280px] right-6 text-5xl md:text-6xl opacity-75 select-none" data-speed="0.40">🪐</span>
+      <span class="parallax-item absolute top-[1680px] left-1/4 text-6xl md:text-7xl opacity-65 rotate-6 select-none" data-speed="0.45">✨</span>
+      <span class="parallax-item absolute top-[2250px] right-1/5 text-7xl md:text-8xl opacity-60 select-none" data-speed="0.28">🟣</span>
+    </div>
     <!-- Hero Section -->
-    <section class="relative min-h-screen-nav flex items-center">
+    <section class="relative min-h-screen-nav flex items-center overflow-hidden">
       <div class="container-xl">
         <div class="text-center">
           <h1 class="text-5xl md:text-7xl font-semibold tracking-tight text-gray-900 mb-6">
@@ -247,7 +261,7 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import PortfolioCard from '@/components/PortfolioCard.vue'
 
 const faqs = ref([
@@ -283,5 +297,33 @@ onMounted(async () => {
   await nextTick()
   const containers = document.querySelectorAll('[ref="setAccordionHeight"]')
   containers.forEach((el) => setAccordionHeight(el))
+
+  const items = document.querySelectorAll('.parallax-item')
+  let ticking = false
+
+  const onScroll = () => {
+    const base = window.scrollY || window.pageYOffset || 0
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const POWER = 1.6
+        items.forEach((el) => {
+          const speed = parseFloat(el.getAttribute('data-speed') || '0.1')
+          const translateY = (base * speed) * POWER
+          el.style.transform = `translate3d(0, ${translateY}px, 0)`
+        })
+        ticking = false
+      })
+      ticking = true
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
+
+  // guardar para cleanup
+  window.__parallaxCleanup = () => window.removeEventListener('scroll', onScroll)
+})
+
+onBeforeUnmount(() => {
+  if (window.__parallaxCleanup) window.__parallaxCleanup()
 })
 </script>

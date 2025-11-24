@@ -9,6 +9,8 @@ Sitio web de la agencia WebsCrafting: diseño y desarrollo de páginas web a med
 - Tailwind CSS v4 (vía `@tailwindcss/postcss`)
 - Vue Router
 
+> Nota: El proyecto ha sido refactorizado para ser 100% Vue. Se eliminaron restos de Next/React.
+
 ## Requisitos
 
 - Node.js 18+ (recomendado 20+)

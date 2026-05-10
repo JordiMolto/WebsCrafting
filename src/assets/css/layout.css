@@ -1,0 +1,157 @@
+.container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  @media (min-width: 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.container--narrow {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  @media (min-width: 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+.container--mid {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  @media (min-width: 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+.section {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+
+  &--subtle {
+    background-color: var(--color-bg-subtle);
+  }
+
+  &--white {
+    background-color: var(--color-bg);
+  }
+
+  &--sm {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+.page-hero {
+  padding-top: 7rem;
+  padding-bottom: 2.5rem;
+
+  & h1 {
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    line-height: 1.08;
+  }
+
+  & p {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    max-width: 42rem;
+  }
+}
+
+.section-header {
+  margin-bottom: 3rem;
+
+  &--center {
+    text-align: center;
+
+    & .section-lead {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}
+
+.section-title {
+  font-size: clamp(1.875rem, 4vw, 2.5rem);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.section-lead {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 42rem;
+  line-height: 1.65;
+}
+
+.cta-block {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  text-align: center;
+
+  & h2 {
+    font-size: clamp(1.875rem, 4vw, 2.5rem);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+  }
+
+  & p {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+}
+
+.btn-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  &--center {
+    justify-content: center;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &--dark {
+    background-color: #000;
+    color: #fff;
+  }
+
+  &--light {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
+}

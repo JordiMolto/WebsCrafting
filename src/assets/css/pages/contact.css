@@ -1,0 +1,129 @@
+/* ── Contact Layout ───────────────────────────────── */
+.contact-grid {
+  display: grid;
+  gap: 3rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* ── Contact Info ─────────────────────────────────── */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  & .contact-info__item {
+    & h3 {
+      font-weight: 600;
+      font-size: 1.0625rem;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    & a {
+      font-weight: 500;
+      color: var(--color-text);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    & p {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  & .social-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+    transition: background-color var(--transition), color var(--transition);
+
+    &:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #000;
+    }
+  }
+}
+
+/* ── Contact Form ─────────────────────────────────── */
+.contact-form {
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  & .contact-form__row {
+    display: grid;
+    gap: 1.5rem;
+
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+/* ── Process Timeline ─────────────────────────────── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 3rem;
+
+  & .timeline-step {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+
+    & .timeline-step__num {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+
+    & h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    & p {
+      color: var(--color-text-muted);
+      line-height: 1.65;
+    }
+  }
+}

@@ -1,45 +1,22 @@
 <template>
-  <div class="min-h-screen bg-white text-gray-900">
-    <nav class="fixed top-0 left-0 right-0 z-50">
-      <div class="container-xl">
-        <div
-          class="flex justify-between items-center h-16 rounded-2xl mt-3 px-3 glass supports-[backdrop-filter]:bg-white/50"
-        >
-          <RouterLink to="/" class="flex items-center">
-            <img
-              src="/logo_webscrafting.png"
-              alt="WebsCrafting"
-              class="h-10 w-auto"
-            />
+  <div class="app">
+    <nav class="nav">
+      <div class="container">
+        <div class="nav__bar">
+          <RouterLink to="/" class="nav__logo">
+            <img src="/logo_webscrafting_vertical.png" alt="WebsCrafting" />
           </RouterLink>
 
-          <div class="hidden md:flex gap-6">
-            <RouterLink to="/" class="text-gray-700 hover:text-black"
-              >Inicio</RouterLink
-            >
-            <RouterLink
-              to="/sobre-nosotros"
-              class="text-gray-700 hover:text-black"
-              >Sobre</RouterLink
-            >
-            <RouterLink to="/servicios" class="text-gray-700 hover:text-black"
-              >Servicios</RouterLink
-            >
-            <RouterLink to="/portfolio" class="text-gray-700 hover:text-black"
-              >Portfolio</RouterLink
-            >
-            <RouterLink to="/blog" class="text-gray-700 hover:text-black"
-              >Blog</RouterLink
-            >
-            <RouterLink to="/contacto" class="text-gray-700 hover:text-black"
-              >Contacto</RouterLink
-            >
+          <div class="nav__menu">
+            <RouterLink to="/" class="nav__link">Inicio</RouterLink>
+            <RouterLink to="/sobre-nosotros" class="nav__link">Sobre</RouterLink>
+            <RouterLink to="/servicios" class="nav__link">Servicios</RouterLink>
+            <RouterLink to="/portfolio" class="nav__link">Portfolio</RouterLink>
+            <RouterLink to="/blog" class="nav__link">Blog</RouterLink>
+            <RouterLink to="/contacto" class="nav__link">Contacto</RouterLink>
           </div>
 
-          <RouterLink
-            to="/contacto"
-            class="hidden md:block px-4 py-2 bg-black text-white rounded-full hover:bg-gray-900"
-          >
+          <RouterLink to="/contacto" class="btn btn--primary btn--sm nav__cta">
             Presupuesto
           </RouterLink>
         </div>
@@ -50,79 +27,39 @@
       <RouterView />
     </main>
 
-    <footer class="bg-gray-950 text-gray-300 mt-32">
-      <div class="container-xl py-16">
-        <div class="grid md:grid-cols-4 gap-8 mb-8">
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <div class="site-footer__grid">
           <div>
-            <h3 class="font-bold text-white mb-4">WebsCrafting</h3>
-            <p class="text-sm text-gray-400">
-              Transformamos tu visión en realidad digital.
-            </p>
+            <p class="site-footer__title">WebsCrafting</p>
+            <p class="site-footer__tagline">Transformamos tu visión en realidad digital.</p>
           </div>
           <div>
-            <h4 class="font-bold text-white mb-4">Servicios</h4>
-            <ul class="text-sm space-y-2">
-              <li>
-                <RouterLink to="/servicios" class="hover:text-white"
-                  >Desarrollo Web</RouterLink
-                >
-              </li>
-              <li>
-                <RouterLink to="/servicios" class="hover:text-white"
-                  >E-commerce</RouterLink
-                >
-              </li>
-              <li>
-                <RouterLink to="/servicios" class="hover:text-white"
-                  >SEO</RouterLink
-                >
-              </li>
+            <p class="site-footer__title">Servicios</p>
+            <ul class="site-footer__list">
+              <li><RouterLink to="/servicios">Desarrollo Web</RouterLink></li>
+              <li><RouterLink to="/servicios">E-commerce</RouterLink></li>
+              <li><RouterLink to="/servicios">SEO</RouterLink></li>
             </ul>
           </div>
           <div>
-            <h4 class="font-bold text-white mb-4">Empresa</h4>
-            <ul class="text-sm space-y-2">
-              <li>
-                <RouterLink to="/sobre-nosotros" class="hover:text-white"
-                  >Sobre Nosotros</RouterLink
-                >
-              </li>
-              <li>
-                <RouterLink to="/portfolio" class="hover:text-white"
-                  >Portfolio</RouterLink
-                >
-              </li>
-              <li>
-                <RouterLink to="/blog" class="hover:text-white"
-                  >Blog</RouterLink
-                >
-              </li>
+            <p class="site-footer__title">Empresa</p>
+            <ul class="site-footer__list">
+              <li><RouterLink to="/sobre-nosotros">Sobre Nosotros</RouterLink></li>
+              <li><RouterLink to="/portfolio">Portfolio</RouterLink></li>
+              <li><RouterLink to="/blog">Blog</RouterLink></li>
             </ul>
           </div>
           <div>
-            <h4 class="font-bold text-white mb-4">Contacto</h4>
-            <ul class="text-sm space-y-2">
-              <li>
-                <a href="mailto:hola@webscrafting.com" class="hover:text-white"
-                  >hola@webscrafting.com</a
-                >
-              </li>
-              <li>
-                <a href="tel:+34600000000" class="hover:text-white"
-                  >+34 600 000 000</a
-                >
-              </li>
-              <li>
-                <a href="https://wa.me/34600000000" class="hover:text-white"
-                  >WhatsApp</a
-                >
-              </li>
+            <p class="site-footer__title">Contacto</p>
+            <ul class="site-footer__list">
+              <li><a href="mailto:hola@webscrafting.com">hola@webscrafting.com</a></li>
+              <li><a href="tel:+34600000000">+34 600 000 000</a></li>
+              <li><a href="https://wa.me/34600000000">WhatsApp</a></li>
             </ul>
           </div>
         </div>
-        <div
-          class="border-t border-white/10 pt-8 text-center text-sm text-gray-400"
-        >
+        <div class="site-footer__copyright">
           <p>&copy; 2025 WebsCrafting. Todos los derechos reservados.</p>
         </div>
       </div>

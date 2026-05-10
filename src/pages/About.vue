@@ -226,6 +226,13 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { useSeo } from '@/composables/useSeo.js'
+
+useSeo({
+  title: 'Sobre Nosotros',
+  description: 'Conoce el equipo de WebsCrafting. Más de 8 años creando experiencias digitales. 150+ proyectos completados, 95% clientes satisfechos.',
+  path: '/sobre-nosotros',
+})
 
 const team = [
   { name: 'Carlos Martínez', role: 'CEO & Founder', avatar: '👨‍💼', bio: 'Visionario con 15+ años en tech.' },

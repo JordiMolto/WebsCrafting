@@ -125,6 +125,13 @@
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { posts as postsData } from '@/data/posts.js'
+import { useSeo } from '@/composables/useSeo.js'
+
+useSeo({
+  title: 'Blog - Desarrollo Web, SEO y Marketing Digital',
+  description: 'Artículos y guías sobre desarrollo web, SEO, marketing digital y diseño. Aprende a potenciar tu presencia online con consejos prácticos.',
+  path: '/blog',
+})
 
 const searchQuery = ref('')
 const selectedCategory = ref('all')

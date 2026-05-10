@@ -251,6 +251,24 @@
 import { RouterLink } from 'vue-router'
 import { ref, onMounted, nextTick } from 'vue'
 import PortfolioCard from '@/components/PortfolioCard.vue'
+import { useSeo } from '@/composables/useSeo.js'
+
+useSeo({
+  title: 'Diseño y Desarrollo Web a Medida',
+  description: 'Agencia de diseño y desarrollo web en España. Sitios modernos, rápidos y elegantes desde €499. E-commerce, SEO y mantenimiento incluido.',
+  path: '/',
+  schema: {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'WebsCrafting',
+    url: 'https://webscrafting.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://webscrafting.com/blog?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  }
+})
 
 const faqs = ref([
   {

@@ -21,6 +21,13 @@
   
   <script setup>
   import PortfolioCard from '@/components/PortfolioCard.vue'
+  import { useSeo } from '@/composables/useSeo.js'
+
+  useSeo({
+    title: 'Portfolio',
+    description: 'Descubre nuestros proyectos web: tiendas online, webs corporativas, portfolios y más. Diseño profesional con resultados reales.',
+    path: '/portfolio',
+  })
   const projects = [
     { title: 'SaaS Startup', image: '/saas-startup.jpg', link: '' },
     { title: 'Marketing Agency', image: '/marketing-agency.jpg', link: '' },

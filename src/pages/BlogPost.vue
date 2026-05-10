@@ -62,11 +62,36 @@
   <script setup>
   import { useRoute, RouterLink } from 'vue-router'
   import { posts } from '@/data/posts.js'
-  
+  import { useSeo } from '@/composables/useSeo.js'
+
   const route = useRoute()
   const slug = route.params.slug
   const post = posts.find(p => p.slug === slug)
-  
+
+  if (post) {
+    useSeo({
+      title: post.title,
+      description: post.excerpt,
+      path: `/blog/${post.slug}`,
+      type: 'article',
+      schema: {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        author: { '@type': 'Person', name: post.author },
+        datePublished: post.date.toISOString(),
+        publisher: {
+          '@type': 'Organization',
+          name: 'WebsCrafting',
+          logo: { '@type': 'ImageObject', url: 'https://webscrafting.com/logo_webscrafting.png' }
+        },
+        keywords: post.tags.join(', '),
+        url: `https://webscrafting.com/blog/${post.slug}`,
+      }
+    })
+  }
+
   const formatDate = (date) => {
     return new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }).format(date)
   }

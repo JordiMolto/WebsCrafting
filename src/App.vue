@@ -131,5 +131,27 @@
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView } from 'vue-router'
+import { useHead } from '@unhead/vue'
+
+useHead({
+  script: [{
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'WebsCrafting',
+      url: 'https://webscrafting.com',
+      logo: 'https://webscrafting.com/logo_webscrafting.png',
+      email: 'hola@webscrafting.com',
+      telephone: '+34600000000',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+34600000000',
+        contactType: 'customer service',
+        availableLanguage: 'Spanish'
+      }
+    })
+  }]
+})
 </script>

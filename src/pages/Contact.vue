@@ -283,6 +283,13 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useSeo } from '@/composables/useSeo.js'
+
+useSeo({
+  title: 'Contacto - Solicita tu Presupuesto Gratuito',
+  description: 'Contacta con WebsCrafting para solicitar tu presupuesto sin compromiso. Diseño web, e-commerce y SEO a medida. Respondemos en menos de 24 horas.',
+  path: '/contacto',
+})
 
 const form = ref({
   name: '',

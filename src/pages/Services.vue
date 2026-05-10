@@ -198,6 +198,24 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useSeo } from '@/composables/useSeo.js'
+
+useSeo({
+  title: 'Servicios y Tarifas',
+  description: 'Web corporativa desde €499, e-commerce desde €999, artículos SEO desde €150 y mantenimiento mensual desde €99. Presupuesto sin compromiso.',
+  path: '/servicios',
+  schema: {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Servicios de WebsCrafting',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Sitio Web Corporativo', description: 'Diseño web profesional desde €499' },
+      { '@type': 'ListItem', position: 2, name: 'E-commerce Profesional', description: 'Tienda online completa desde €999' },
+      { '@type': 'ListItem', position: 3, name: 'Artículos SEO', description: 'Contenido optimizado desde €150 por artículo' },
+      { '@type': 'ListItem', position: 4, name: 'Mantenimiento y Soporte', description: 'Mantenimiento mensual desde €99/mes' },
+    ]
+  }
+})
 
 const selectedService = ref(null)
 

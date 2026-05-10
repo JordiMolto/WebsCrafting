@@ -1,0 +1,17 @@
+{
+  "name": "WebsCrafting",
+  "short_name": "WebsCrafting",
+  "description": "Agencia de diseño y desarrollo web a medida",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/logo_webscrafting.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

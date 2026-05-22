@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\jordi\\\\Proyectos\\\\WebsCrafting_Projects\\\\WebsCrafting\" -Force | Where-Object { -not $_.Name.StartsWith\\('.'\\) } | Select-Object Name, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Folder'}else{'File'}}} | Sort-Object Type, Name)",
+      "Bash(not exist *)"
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 <template>
-  <div class="app">
+  <ComingSoon v-if="isMaintenanceMode" />
+  <div v-else class="app">
     <nav class="nav">
       <div class="container">
         <div class="nav__bar">
@@ -9,7 +10,9 @@
 
           <div class="nav__menu">
             <RouterLink to="/" class="nav__link">Inicio</RouterLink>
-            <RouterLink to="/sobre-nosotros" class="nav__link">Sobre</RouterLink>
+            <RouterLink to="/sobre-nosotros" class="nav__link"
+              >Sobre</RouterLink
+            >
             <RouterLink to="/servicios" class="nav__link">Servicios</RouterLink>
             <RouterLink to="/portfolio" class="nav__link">Portfolio</RouterLink>
             <RouterLink to="/blog" class="nav__link">Blog</RouterLink>
@@ -32,7 +35,9 @@
         <div class="site-footer__grid">
           <div>
             <p class="site-footer__title">WebsCrafting</p>
-            <p class="site-footer__tagline">Transformamos tu visión en realidad digital.</p>
+            <p class="site-footer__tagline">
+              Transformamos tu visión en realidad digital.
+            </p>
           </div>
           <div>
             <p class="site-footer__title">Servicios</p>
@@ -45,7 +50,9 @@
           <div>
             <p class="site-footer__title">Empresa</p>
             <ul class="site-footer__list">
-              <li><RouterLink to="/sobre-nosotros">Sobre Nosotros</RouterLink></li>
+              <li>
+                <RouterLink to="/sobre-nosotros">Sobre Nosotros</RouterLink>
+              </li>
               <li><RouterLink to="/portfolio">Portfolio</RouterLink></li>
               <li><RouterLink to="/blog">Blog</RouterLink></li>
             </ul>
@@ -53,7 +60,9 @@
           <div>
             <p class="site-footer__title">Contacto</p>
             <ul class="site-footer__list">
-              <li><a href="mailto:hola@webscrafting.com">hola@webscrafting.com</a></li>
+              <li>
+                <a href="mailto:info@webscrafting.com">info@webscrafting.com</a>
+              </li>
               <li><a href="tel:+34600000000">+34 600 000 000</a></li>
               <li><a href="https://wa.me/34600000000">WhatsApp</a></li>
             </ul>
@@ -68,27 +77,32 @@
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { useHead } from '@unhead/vue'
+import { RouterLink, RouterView } from "vue-router";
+import { useHead } from "@unhead/vue";
+import ComingSoon from "./pages/ComingSoon.vue";
+
+const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
 useHead({
-  script: [{
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'WebsCrafting',
-      url: 'https://webscrafting.com',
-      logo: 'https://webscrafting.com/logo_webscrafting.png',
-      email: 'hola@webscrafting.com',
-      telephone: '+34600000000',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+34600000000',
-        contactType: 'customer service',
-        availableLanguage: 'Spanish'
-      }
-    })
-  }]
-})
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "WebsCrafting",
+        url: "https://webscrafting.com",
+        logo: "https://webscrafting.com/logo_webscrafting.png",
+        email: "info@webscrafting.com",
+        telephone: "+34600000000",
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+34600000000",
+          contactType: "customer service",
+          availableLanguage: "Spanish",
+        },
+      }),
+    },
+  ],
+});
 </script>

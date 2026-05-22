@@ -44,8 +44,13 @@
 
         <div class="post-cta">
           <h3>¿Necesitas ayuda?</h3>
-          <p>Si tienes dudas sobre este tema, contáctanos para una consulta gratuita.</p>
-          <RouterLink to="/contacto" class="btn btn--primary">Solicitar Asesoramiento</RouterLink>
+          <p>
+            Si tienes dudas sobre este tema, contáctanos para una consulta
+            gratuita.
+          </p>
+          <RouterLink to="/contacto" class="btn btn--primary"
+            >Solicitar Asesoramiento</RouterLink
+          >
         </div>
       </div>
     </section>
@@ -53,39 +58,52 @@
 </template>
 
 <script setup>
-import { useRoute, RouterLink } from 'vue-router'
-import { posts } from '@/data/posts.js'
-import { useSeo } from '@/composables/useSeo.js'
+import { useRoute, RouterLink } from "vue-router";
+import { posts } from "@/data/posts.js";
+import { useSeo } from "@/composables/useSeo.js";
 
-const route = useRoute()
-const slug = route.params.slug
-const post = posts.find(p => p.slug === slug)
+const route = useRoute();
+const slug = route.params.slug;
+const post = posts.find((p) => p.slug === slug);
 
-if (post) {
-  useSeo({
-    title: post.title,
-    description: post.excerpt,
-    path: `/blog/${post.slug}`,
-    type: 'article',
-    schema: {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.excerpt,
-      author: { '@type': 'Person', name: post.author },
-      datePublished: post.date.toISOString(),
-      publisher: {
-        '@type': 'Organization',
-        name: 'WebsCrafting',
-        logo: { '@type': 'ImageObject', url: 'https://webscrafting.com/logo_webscrafting.png' }
+useSeo(
+  post
+    ? {
+        title: post.title,
+        description: post.excerpt,
+        path: `/blog/${post.slug}`,
+        type: "article",
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: post.title,
+          description: post.excerpt,
+          author: { "@type": "Person", name: post.author },
+          datePublished: post.date.toISOString(),
+          publisher: {
+            "@type": "Organization",
+            name: "WebsCrafting",
+            logo: {
+              "@type": "ImageObject",
+              url: "https://webscrafting.com/logo_webscrafting.png",
+            },
+          },
+          keywords: post.tags.join(", "),
+          url: `https://webscrafting.com/blog/${post.slug}`,
+        },
+      }
+    : {
+        title: "Artículo no encontrado",
+        description: "",
+        path: `/blog/${slug}`,
       },
-      keywords: post.tags.join(', '),
-      url: `https://webscrafting.com/blog/${post.slug}`,
-    }
-  })
-}
+);
 
 const formatDate = (date) => {
-  return new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }).format(date)
-}
+  return new Intl.DateTimeFormat("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+};
 </script>

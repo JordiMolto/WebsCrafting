@@ -1,6 +1,8 @@
 .accordion-enter-active,
 .accordion-leave-active {
-  transition: height 250ms ease, opacity 250ms ease;
+  transition:
+    height 250ms ease,
+    opacity 250ms ease;
   overflow: hidden;
 }
 

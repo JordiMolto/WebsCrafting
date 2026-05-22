@@ -1,11 +1,11 @@
-import { createApp } from "vue"
-import { createUnhead } from "@unhead/vue"
-import router from "./router"
-import App from "./App.vue"
-import "./assets/css/main.css"
+import { createApp } from "vue";
+import { createUnhead, headSymbol } from "@unhead/vue";
+import router from "./router";
+import App from "./App.vue";
+import "./assets/css/main.css";
 
-const app = createApp(App)
-const head = createUnhead()
-app.use(head)
-app.use(router)
-app.mount("#app")
+const app = createApp(App);
+const head = createUnhead();
+app.provide(headSymbol, head);
+app.use(router);
+app.mount("#app");

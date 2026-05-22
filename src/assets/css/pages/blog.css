@@ -33,7 +33,9 @@
     font-size: 0.875rem;
     cursor: pointer;
     border: none;
-    transition: background-color var(--transition), color var(--transition);
+    transition:
+      background-color var(--transition),
+      color var(--transition);
     background: #f3f4f6;
     color: #374151;
 

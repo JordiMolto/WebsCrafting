@@ -55,7 +55,9 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-text);
-    transition: background-color var(--transition), color var(--transition);
+    transition:
+      background-color var(--transition),
+      color var(--transition);
 
     &:hover {
       background-color: #000;

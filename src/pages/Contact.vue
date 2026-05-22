@@ -255,14 +255,14 @@ useSeo({
 });
 
 const form = ref({
-  name: "",
-  email: "",
-  phone: "",
-  website: "",
-  service: "",
-  budget: "",
-  message: "",
-  terms: false,
+  name: "Carlos Martínez",
+  email: "info@webscrafting.com",
+  phone: "+34 612 345 678",
+  website: "https://example.com",
+  service: "web",
+  budget: "1000-5000",
+  message: "Hola, me gustaría renovar mi web corporativa. Actualmente tenemos una web antigua en WordPress que carga lento y no está optimizada para móvil. Buscamos algo moderno, rápido y que transmita confianza a nuestros clientes. Somos una empresa de 10 personas del sector logístico.",
+  terms: true,
 });
 const submitting = ref(false);
 const submitSuccess = ref(false);

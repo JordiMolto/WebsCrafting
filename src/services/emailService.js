@@ -1,65 +1,71 @@
-import { Resend } from "resend";
+import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-const FROM_EMAIL = process.env.FROM_EMAIL;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const SITE_URL = process.env.SITE_URL;
+const FROM_EMAIL               = process.env.FROM_EMAIL               || 'info@webscrafting.com'
+const ADMIN_EMAIL              = process.env.ADMIN_EMAIL              || 'info@webscrafting.com'
+const SITE_URL                 = process.env.SITE_URL                 || 'https://webscrafting.com'
+const AUDIENCE_LEADS           = process.env.RESEND_AUDIENCE_LEADS
+const AUDIENCE_NEWSLETTER      = process.env.RESEND_AUDIENCE_NEWSLETTER
+const LOGO_URL                 = `${SITE_URL}/logo_webscrafting.png`
 
 const SERVICE_LABELS = {
-  web: "Sitio Web",
-  ecommerce: "E-commerce",
-  seo: "Artículos SEO",
-  maintenance: "Mantenimiento",
-  other: "Otro",
-};
+  web:         'Sitio Web',
+  ecommerce:   'E-commerce',
+  seo:         'Artículos SEO',
+  maintenance: 'Mantenimiento',
+  other:       'Otro',
+}
 
 const BUDGET_LABELS = {
-  "500-1000": "€500 – €1.000",
-  "1000-5000": "€1.000 – €5.000",
-  "5000-10000": "€5.000 – €10.000",
-  "10000+": "€10.000+",
-};
+  '500-1000':   '€500 – €1.000',
+  '1000-5000':  '€1.000 – €5.000',
+  '5000-10000': '€5.000 – €10.000',
+  '10000+':     '€10.000+',
+}
 
 function esc(str) {
-  if (str == null) return "";
+  if (str == null) return ''
   return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function initials(name) {
+  return String(name).trim().split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')
 }
 
 function timestamp() {
-  return new Date().toLocaleString("es-ES", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return new Date().toLocaleString('es-ES', {
+    weekday: 'long', year: 'numeric', month: 'long',
+    day: 'numeric', hour: '2-digit', minute: '2-digit',
+  })
 }
 
 // ─── TEMPLATE 1: Notificación interna de lead ────────────────────────────────
 
 function buildLeadNotificationHtml(data) {
-  const serviceLabel = esc(SERVICE_LABELS[data.service] || data.service);
-  const budgetLabel = esc(BUDGET_LABELS[data.budget] || data.budget || "—");
-  const websiteCell = data.website
-    ? `<a href="${esc(data.website)}" style="color:#0a1628;font-size:13px;font-family:'Courier New',monospace;text-decoration:underline;">${esc(data.website)}</a>`
-    : `<span style="color:#b0bec5;font-size:13px;font-style:italic;">Sin web actual</span>`;
-  const phoneRow = data.phone
-    ? `
+  const serviceLabel = SERVICE_LABELS[data.service] || data.service
+  const budgetLabel  = BUDGET_LABELS[data.budget]   || data.budget || '—'
+  const ini          = initials(data.name)
+
+  const row = (label, value, highlight = false) => `
     <tr>
-      <td width="110" style="background:#f5f7fa;padding:12px 14px;border-radius:6px 0 0 6px;border:1px solid #e2e8f0;border-right:none;">
-        <span style="color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Teléfono</span>
-      </td>
-      <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:1px solid #e2e8f0;border-left:none;background:#fff;">
-        <a href="tel:${esc(data.phone)}" style="color:#0a1628;font-size:14px;font-weight:700;text-decoration:none;">${esc(data.phone)}</a>
+      <td style="padding:0 0 2px;">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+          <tr>
+            <td width="130" style="padding:14px 16px;vertical-align:top;">
+              <span style="color:#9ca3af;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">${label}</span>
+            </td>
+            <td style="padding:14px 16px;background:${highlight ? '#fafafa' : '#ffffff'};border-left:1px solid #f3f4f6;">
+              ${value}
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>`
-    : "";
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -68,127 +74,100 @@ function buildLeadNotificationHtml(data) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lead Nuevo — WebsCrafting</title>
 </head>
-<body style="margin:0;padding:0;background:#e8ecf2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#e8ecf2;padding:28px 16px;">
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f0f0f0;padding:40px 16px;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+<table width="580" cellpadding="0" cellspacing="0" role="presentation" style="max-width:580px;width:100%;">
 
-  <!-- HEADER -->
+  <!-- LOGO HEADER -->
   <tr>
-    <td style="background:#0a1628;padding:20px 32px;border-radius:8px 8px 0 0;">
+    <td align="center" style="padding-bottom:24px;">
+      <img src="${LOGO_URL}" alt="WebsCrafting" height="28" style="display:block;height:28px;border:0;">
+    </td>
+  </tr>
+
+  <!-- CARD -->
+  <tr>
+    <td style="background:#111111;border-radius:16px 16px 0 0;padding:32px 40px 28px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
-          <td><span style="color:#fff;font-size:16px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">WEBSCRAFTING</span></td>
+          <td>
+            <span style="background:#e8552a;color:#fff;font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;padding:4px 12px;border-radius:20px;">Lead nuevo</span>
+            <p style="margin:16px 0 4px;color:#ffffff;font-size:22px;font-weight:700;line-height:1.2;">${esc(data.name)}</p>
+            <p style="margin:0;color:#6b7280;font-size:13px;">${timestamp()}</p>
+          </td>
+          <td align="right" style="vertical-align:top;">
+            <div style="width:52px;height:52px;background:#e8552a;border-radius:50%;text-align:center;line-height:52px;font-size:18px;font-weight:800;color:#fff;display:inline-block;">${ini}</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- SERVICE HIGHLIGHT -->
+  <tr>
+    <td style="background:#e8552a;padding:12px 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td>
+            <span style="color:rgba(255,255,255,0.7);font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Servicio solicitado</span>
+            <p style="margin:2px 0 0;color:#fff;font-size:16px;font-weight:800;">${esc(serviceLabel)}</p>
+          </td>
+          ${data.budget ? `
           <td align="right">
-            <span style="background:#e8552a;color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:0.12em;text-transform:uppercase;">● LEAD NUEVO</span>
-          </td>
+            <span style="color:rgba(255,255,255,0.7);font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:block;text-align:right;">Presupuesto</span>
+            <p style="margin:2px 0 0;color:#fff;font-size:16px;font-weight:800;text-align:right;">${esc(budgetLabel)}</p>
+          </td>` : ''}
         </tr>
       </table>
     </td>
   </tr>
 
-  <!-- TIMESTAMP -->
+  <!-- DATA ROWS -->
   <tr>
-    <td style="background:#e8552a;padding:9px 32px;">
-      <span style="color:#fff;font-size:11px;font-weight:600;letter-spacing:0.04em;">${timestamp()}</span>
+    <td style="background:#ffffff;">
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">
+        ${row('Email',
+          `<a href="mailto:${esc(data.email)}" style="color:#e8552a;font-size:14px;font-weight:600;text-decoration:none;">${esc(data.email)}</a>`
+        )}
+        ${row('Web actual', data.website
+          ? `<a href="${esc(data.website)}" style="color:#111111;font-size:13px;font-family:'Courier New',monospace;text-decoration:underline;" target="_blank">${esc(data.website)}</a>`
+          : `<span style="color:#d1d5db;font-size:13px;font-style:italic;">No indicada</span>`
+        , true)}
+        ${data.phone ? row('Teléfono',
+          `<a href="tel:${esc(data.phone)}" style="color:#111111;font-size:14px;font-weight:600;text-decoration:none;">${esc(data.phone)}</a>`
+        ) : ''}
+      </table>
     </td>
   </tr>
 
-  <!-- BODY -->
+  <!-- MESSAGE -->
   <tr>
-    <td style="background:#fff;padding:28px 32px;">
-
-      <p style="margin:0 0 18px;color:#0a1628;font-size:11px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;padding-bottom:10px;border-bottom:2px solid #e8ecf2;">
-        Datos del Lead
-      </p>
-
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;border-spacing:0 7px;">
-
-        <!-- Nombre -->
+    <td style="background:#ffffff;padding:0 40px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
-          <td width="110" style="background:#f5f7fa;padding:12px 14px;border-radius:6px 0 0 6px;border:1px solid #e2e8f0;border-right:none;">
-            <span style="color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Nombre</span>
-          </td>
-          <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:1px solid #e2e8f0;border-left:none;background:#fff;">
-            <span style="color:#0a1628;font-size:15px;font-weight:700;">${esc(data.name)}</span>
-          </td>
-        </tr>
-
-        <!-- Email -->
-        <tr>
-          <td width="110" style="background:#f5f7fa;padding:12px 14px;border-radius:6px 0 0 6px;border:1px solid #e2e8f0;border-right:none;">
-            <span style="color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Email</span>
-          </td>
-          <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:1px solid #e2e8f0;border-left:none;background:#fff;">
-            <a href="mailto:${esc(data.email)}" style="color:#e8552a;font-size:14px;font-weight:700;text-decoration:none;">${esc(data.email)}</a>
-          </td>
-        </tr>
-
-        <!-- Web actual -->
-        <tr>
-          <td width="110" style="background:#f5f7fa;padding:12px 14px;border-radius:6px 0 0 6px;border:1px solid #e2e8f0;border-right:none;">
-            <span style="color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Web actual</span>
-          </td>
-          <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:1px solid #e2e8f0;border-left:none;background:#fff;">
-            ${websiteCell}
-          </td>
-        </tr>
-
-        <!-- Servicio — highlighted accent -->
-        <tr>
-          <td width="110" style="background:#e8552a;padding:12px 14px;border-radius:6px 0 0 6px;">
-            <span style="color:#fff;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Servicio</span>
-          </td>
-          <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:2px solid #e8552a;border-left:none;background:#fff8f6;">
-            <span style="color:#0a1628;font-size:15px;font-weight:800;">${serviceLabel}</span>
-          </td>
-        </tr>
-
-        <!-- Presupuesto — highlighted navy -->
-        <tr>
-          <td width="110" style="background:#0a1628;padding:12px 14px;border-radius:6px 0 0 6px;">
-            <span style="color:#fff;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Presupuesto</span>
-          </td>
-          <td style="padding:12px 14px;border-radius:0 6px 6px 0;border:2px solid #0a1628;border-left:none;background:#f5f7fa;">
-            <span style="color:#0a1628;font-size:16px;font-weight:800;">${budgetLabel}</span>
-          </td>
-        </tr>
-
-        <!-- Teléfono (condicional) -->
-        ${phoneRow}
-
-      </table>
-
-      <!-- Mensaje -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:18px;">
-        <tr>
-          <td style="background:#f5f7fa;padding:10px 14px;border-radius:6px 6px 0 0;border:1px solid #e2e8f0;border-bottom:none;">
-            <span style="color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;">Mensaje</span>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:18px 14px;border-radius:0 0 6px 6px;border:1px solid #e2e8f0;border-top:none;background:#fff;">
-            <p style="margin:0;color:#1e293b;font-size:14px;line-height:1.75;white-space:pre-wrap;">${esc(data.message)}</p>
+          <td style="border-top:1px solid #f3f4f6;padding-top:20px;">
+            <p style="margin:0 0 10px;color:#9ca3af;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Mensaje</p>
+            <p style="margin:0;color:#374151;font-size:14px;line-height:1.8;white-space:pre-wrap;">${esc(data.message)}</p>
           </td>
         </tr>
       </table>
-
     </td>
   </tr>
 
   <!-- CTA -->
   <tr>
-    <td style="background:#f8fafc;padding:18px 32px;border-top:1px solid #e2e8f0;">
+    <td style="background:#fafafa;border-top:1px solid #f3f4f6;padding:24px 40px;border-radius:0 0 16px 16px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
           <td>
             <a href="mailto:${esc(data.email)}?subject=Re%3A%20Tu%20solicitud%20en%20WebsCrafting"
-               style="display:inline-block;background:#e8552a;color:#fff;text-decoration:none;padding:11px 22px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">
-              Responder al lead
+               style="display:inline-block;background:#111111;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">
+              Responder al lead →
             </a>
           </td>
-          <td align="right">
-            <span style="color:#94a3b8;font-size:11px;">Sistema interno · WebsCrafting</span>
+          <td align="right" style="vertical-align:middle;">
+            <span style="color:#d1d5db;font-size:11px;">Sistema interno</span>
           </td>
         </tr>
       </table>
@@ -197,8 +176,8 @@ function buildLeadNotificationHtml(data) {
 
   <!-- FOOTER -->
   <tr>
-    <td style="background:#0a1628;padding:12px 32px;border-radius:0 0 8px 8px;text-align:center;">
-      <span style="color:#fff;opacity:0.3;font-size:10px;letter-spacing:0.06em;">webscrafting.com — Notificación interna automatizada. No reenvíes este correo.</span>
+    <td align="center" style="padding:24px 0 0;">
+      <p style="margin:0;color:#9ca3af;font-size:11px;">webscrafting.com &nbsp;·&nbsp; Notificación interna. No reenvíes este correo.</p>
     </td>
   </tr>
 
@@ -206,23 +185,14 @@ function buildLeadNotificationHtml(data) {
 </td></tr>
 </table>
 </body>
-</html>`;
+</html>`
 }
 
-// ─── TEMPLATE 2: Auto-respuesta al cliente (lead) ────────────────────────────
+// ─── TEMPLATE 2: Auto-respuesta al cliente ───────────────────────────────────
 
 function buildContactAutoReplyHtml(data) {
-  const firstName = esc(data.name.trim().split(" ")[0]);
-  const serviceLabel = esc(SERVICE_LABELS[data.service] || data.service);
-  const budgetRow = data.budget
-    ? `
-    <tr>
-      <td style="padding-bottom:10px;">
-        <span style="color:#94a3b8;font-size:12px;font-weight:600;display:block;margin-bottom:2px;">Presupuesto indicado</span>
-        <span style="color:#0a1628;font-size:13px;font-weight:700;">${esc(BUDGET_LABELS[data.budget] || data.budget)}</span>
-      </td>
-    </tr>`
-    : "";
+  const firstName    = esc(data.name.trim().split(' ')[0])
+  const serviceLabel = SERVICE_LABELS[data.service] || data.service
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -231,104 +201,120 @@ function buildContactAutoReplyHtml(data) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tu solicitud — WebsCrafting</title>
 </head>
-<body style="margin:0;padding:0;background:#e8ecf2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#e8ecf2;padding:28px 16px;">
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f0f0f0;padding:40px 16px;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+<table width="580" cellpadding="0" cellspacing="0" role="presentation" style="max-width:580px;width:100%;">
 
-  <!-- HEADER -->
+  <!-- LOGO -->
   <tr>
-    <td style="background:#0a1628;padding:26px 40px;border-radius:8px 8px 0 0;">
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-        <tr>
-          <td>
-            <p style="margin:0 0 3px;color:#e8552a;font-size:10px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">Agencia de desarrollo web</p>
-            <p style="margin:0;color:#fff;font-size:20px;font-weight:800;letter-spacing:0.05em;">WEBSCRAFTING</p>
-          </td>
-          <td align="right" style="vertical-align:bottom;">
-            <span style="color:#fff;opacity:0.3;font-size:11px;">webscrafting.com</span>
-          </td>
-        </tr>
-      </table>
+    <td align="center" style="padding-bottom:24px;">
+      <img src="${LOGO_URL}" alt="WebsCrafting" height="28" style="display:block;height:28px;border:0;">
     </td>
+  </tr>
+
+  <!-- HERO -->
+  <tr>
+    <td style="background:#111111;border-radius:16px 16px 0 0;padding:48px 48px 40px;">
+      <p style="margin:0 0 16px;color:#e8552a;font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">Agencia de desarrollo web</p>
+      <p style="margin:0 0 12px;color:#ffffff;font-size:32px;font-weight:800;line-height:1.15;">Hola, ${firstName}.</p>
+      <p style="margin:0;color:#9ca3af;font-size:15px;line-height:1.7;">Tu solicitud ha llegado. La revisamos y respondemos en menos de 24 horas.</p>
+    </td>
+  </tr>
+
+  <!-- DIVIDER LINE -->
+  <tr>
+    <td style="background:#e8552a;height:3px;font-size:0;line-height:0;">&nbsp;</td>
   </tr>
 
   <!-- BODY -->
   <tr>
-    <td style="background:#fff;padding:40px 40px 32px;">
+    <td style="background:#ffffff;padding:40px 48px;">
 
-      <p style="margin:0 0 6px;color:#0a1628;font-size:26px;font-weight:800;line-height:1.15;">Solicitud recibida.</p>
-      <p style="margin:0 0 28px;color:#e8552a;font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;">Estamos en ello.</p>
-
-      <p style="margin:0 0 18px;color:#334155;font-size:15px;line-height:1.75;">
-        ${firstName}, tu solicitud para <strong style="color:#0a1628;">${serviceLabel}</strong> ha llegado correctamente. Nuestro equipo la analiza y te respondemos con criterio en menos de 24 horas.
+      <p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.8;">
+        Recibimos tu solicitud para <strong style="color:#111111;">${esc(serviceLabel)}</strong>. Sin rodeos: si encaja con lo que hacemos, te lo decimos directo. Si no, también.
       </p>
 
-      <p style="margin:0 0 30px;color:#334155;font-size:15px;line-height:1.75;">
-        Sin rodeos: si el proyecto encaja con lo que hacemos, te lo decimos directo. Si no, también.
-      </p>
-
-      <!-- DIVIDER -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:26px;">
-        <tr><td style="border-top:2px solid #e8ecf2;"></td></tr>
-      </table>
-
-      <!-- RESUMEN -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f5f7fa;border-radius:8px;overflow:hidden;margin-bottom:30px;">
+      <!-- SUMMARY CARD -->
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:32px;">
         <tr>
-          <td style="padding:14px 20px;border-bottom:1px solid #e2e8f0;">
-            <span style="color:#0a1628;font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;">Resumen de tu solicitud</span>
+          <td style="padding:18px 24px;border-bottom:1px solid #f3f4f6;">
+            <span style="color:#111111;font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;">Resumen</span>
           </td>
         </tr>
         <tr>
-          <td style="padding:18px 20px 8px;">
+          <td style="padding:20px 24px;">
             <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
               <tr>
-                <td style="padding-bottom:10px;">
-                  <span style="color:#94a3b8;font-size:12px;font-weight:600;display:block;margin-bottom:2px;">Nombre</span>
-                  <span style="color:#0a1628;font-size:13px;font-weight:700;">${esc(data.name)}</span>
+                <td width="110" style="padding-bottom:14px;vertical-align:top;">
+                  <span style="color:#9ca3af;font-size:12px;font-weight:600;">Nombre</span>
+                </td>
+                <td style="padding-bottom:14px;">
+                  <span style="color:#111111;font-size:13px;font-weight:700;">${esc(data.name)}</span>
                 </td>
               </tr>
               <tr>
-                <td style="padding-bottom:10px;">
-                  <span style="color:#94a3b8;font-size:12px;font-weight:600;display:block;margin-bottom:2px;">Servicio solicitado</span>
-                  <span style="color:#0a1628;font-size:13px;font-weight:700;">${serviceLabel}</span>
+                <td width="110" style="padding-bottom:14px;vertical-align:top;">
+                  <span style="color:#9ca3af;font-size:12px;font-weight:600;">Servicio</span>
+                </td>
+                <td style="padding-bottom:14px;">
+                  <span style="color:#111111;font-size:13px;font-weight:700;">${esc(serviceLabel)}</span>
                 </td>
               </tr>
-              ${budgetRow}
+              ${data.budget ? `
+              <tr>
+                <td width="110" style="vertical-align:top;">
+                  <span style="color:#9ca3af;font-size:12px;font-weight:600;">Presupuesto</span>
+                </td>
+                <td>
+                  <span style="color:#111111;font-size:13px;font-weight:700;">${esc(BUDGET_LABELS[data.budget] || data.budget)}</span>
+                </td>
+              </tr>` : ''}
             </table>
           </td>
         </tr>
       </table>
 
-      <p style="margin:0 0 8px;color:#475569;font-size:14px;line-height:1.65;">
-        Si tienes información adicional relevante, responde directamente a este correo.
-      </p>
-      <p style="margin:0 0 28px;color:#475569;font-size:14px;line-height:1.65;">
-        Hablaremos pronto.
-      </p>
+      <p style="margin:0 0 8px;color:#6b7280;font-size:14px;line-height:1.7;">Si tienes más contexto, responde directamente aquí.</p>
+      <p style="margin:0 0 36px;color:#6b7280;font-size:14px;line-height:1.7;">Hablaremos pronto.</p>
 
-      <p style="margin:0;color:#0a1628;font-size:14px;font-weight:700;">Equipo WebsCrafting</p>
+      <!-- SIGNATURE -->
+      <table cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td style="vertical-align:middle;padding-right:14px;">
+            <div style="width:44px;height:44px;background:#111111;border-radius:50%;text-align:center;line-height:44px;font-size:16px;font-weight:800;color:#fff;display:inline-block;">J</div>
+          </td>
+          <td style="vertical-align:middle;">
+            <p style="margin:0;color:#111111;font-size:14px;font-weight:700;">Jordi · WebsCrafting</p>
+            <p style="margin:2px 0 0;">
+              <a href="mailto:${FROM_EMAIL}" style="color:#e8552a;font-size:12px;text-decoration:none;">${FROM_EMAIL}</a>
+            </p>
+          </td>
+        </tr>
+      </table>
 
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="background:#0a1628;padding:18px 40px;border-radius:0 0 8px 8px;">
+    <td style="background:#111111;padding:24px 48px;border-radius:0 0 16px 16px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
           <td>
-            <p style="margin:0 0 3px;color:#fff;opacity:0.7;font-size:12px;">
-              <a href="mailto:info@webscrafting.com" style="color:#e8552a;text-decoration:none;">info@webscrafting.com</a>
-            </p>
-            <p style="margin:0;color:#fff;opacity:0.3;font-size:11px;">webscrafting.com &middot; Madrid, España</p>
+            <a href="${SITE_URL}" style="color:#e8552a;font-size:12px;text-decoration:none;font-weight:600;">webscrafting.com</a>
           </td>
-          <td align="right" style="vertical-align:bottom;">
-            <span style="color:#fff;opacity:0.2;font-size:10px;letter-spacing:0.05em;">&copy; ${new Date().getFullYear()} WebsCrafting</span>
+          <td align="right">
+            <span style="color:#4b5563;font-size:11px;">&copy; ${new Date().getFullYear()} WebsCrafting</span>
           </td>
         </tr>
       </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" style="padding:20px 0 0;">
+      <p style="margin:0;color:#9ca3af;font-size:11px;">Madrid, España &nbsp;·&nbsp; Respondemos en menos de 24h</p>
     </td>
   </tr>
 
@@ -336,13 +322,13 @@ function buildContactAutoReplyHtml(data) {
 </td></tr>
 </table>
 </body>
-</html>`;
+</html>`
 }
 
-// ─── TEMPLATE 3: Bienvenida newsletter / lead magnet ─────────────────────────
+// ─── TEMPLATE 3: Bienvenida newsletter ───────────────────────────────────────
 
 function buildNewsletterWelcomeHtml(data) {
-  const unsubUrl = `${SITE_URL}/baja-newsletter?email=${encodeURIComponent(data.email)}`;
+  const unsubUrl = `${SITE_URL}/baja-newsletter?email=${encodeURIComponent(data.email)}`
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -351,133 +337,129 @@ function buildNewsletterWelcomeHtml(data) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bienvenido — WebsCrafting</title>
 </head>
-<body style="margin:0;padding:0;background:#e8ecf2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#e8ecf2;padding:28px 16px;">
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f0f0f0;padding:40px 16px;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+<table width="580" cellpadding="0" cellspacing="0" role="presentation" style="max-width:580px;width:100%;">
 
-  <!-- HEADER -->
+  <!-- LOGO -->
   <tr>
-    <td style="background:#0a1628;padding:26px 40px 0;border-radius:8px 8px 0 0;">
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-        <tr>
-          <td>
-            <p style="margin:0 0 3px;color:#e8552a;font-size:10px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">Contenido estratégico</p>
-            <p style="margin:0 0 20px;color:#fff;font-size:20px;font-weight:800;letter-spacing:0.05em;">WEBSCRAFTING</p>
-          </td>
-        </tr>
-      </table>
-      <!-- Accent line -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-        <tr><td style="background:#e8552a;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
-      </table>
+    <td align="center" style="padding-bottom:24px;">
+      <img src="${LOGO_URL}" alt="WebsCrafting" height="28" style="display:block;height:28px;border:0;">
     </td>
   </tr>
 
-  <!-- HERO (navy) -->
+  <!-- HERO -->
   <tr>
-    <td style="background:#0a1628;padding:28px 40px 36px;">
-      <p style="margin:0 0 10px;color:#fff;font-size:26px;font-weight:800;line-height:1.2;">Dentro.<br>Nada de relleno.</p>
-      <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.65;">Recibirás análisis, frameworks y decisiones reales de proyectos web. Sin padding. Sin fluff.</p>
+    <td style="background:#111111;border-radius:16px 16px 0 0;padding:56px 48px 48px;">
+      <p style="margin:0 0 20px;color:#e8552a;font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">Contenido estratégico</p>
+      <p style="margin:0 0 16px;color:#ffffff;font-size:36px;font-weight:800;line-height:1.1;">Dentro.<br>Nada de relleno.</p>
+      <p style="margin:0;color:#6b7280;font-size:15px;line-height:1.7;max-width:380px;">Análisis, frameworks y decisiones reales de proyectos web. Sin padding. Sin fluff.</p>
     </td>
+  </tr>
+
+  <!-- ACCENT BAR -->
+  <tr>
+    <td style="background:#e8552a;height:3px;font-size:0;line-height:0;">&nbsp;</td>
   </tr>
 
   <!-- BODY -->
   <tr>
-    <td style="background:#fff;padding:38px 40px 30px;">
+    <td style="background:#ffffff;padding:40px 48px 36px;">
 
-      <p style="margin:0 0 20px;color:#334155;font-size:15px;line-height:1.75;">
-        Ya estás en la lista. A partir de ahora recibirás contenido sobre desarrollo web, conversión y estrategia digital desde el punto de vista de quienes lo ejecutan, no de quienes solo lo escriben.
+      <p style="margin:0 0 28px;color:#374151;font-size:15px;line-height:1.8;">
+        Ya estás en la lista. Recibirás contenido sobre desarrollo web, conversión y estrategia digital desde el punto de vista de quienes lo ejecutan.
       </p>
 
-      <!-- QUÉ RECIBIRÁS -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f5f7fa;border-radius:8px;overflow:hidden;margin-bottom:28px;">
+      <!-- WHAT TO EXPECT -->
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:36px;">
+
         <tr>
-          <td style="padding:14px 20px;border-bottom:1px solid #e2e8f0;">
-            <span style="color:#0a1628;font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;">Qué vas a recibir</span>
+          <td style="padding-bottom:14px;">
+            <table cellpadding="0" cellspacing="0" role="presentation">
+              <tr>
+                <td style="width:32px;vertical-align:top;padding-top:2px;">
+                  <div style="width:24px;height:24px;background:#f9fafb;border-radius:6px;text-align:center;line-height:24px;font-size:12px;">→</div>
+                </td>
+                <td style="padding-left:12px;vertical-align:middle;">
+                  <span style="color:#111111;font-size:14px;font-weight:600;">Análisis técnicos de proyectos reales</span>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
+
         <tr>
-          <td style="padding:16px 20px;">
-
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:8px;">
+          <td style="padding-bottom:14px;">
+            <table cellpadding="0" cellspacing="0" role="presentation">
               <tr>
-                <td width="20" style="vertical-align:top;padding-top:1px;">
-                  <table cellpadding="0" cellspacing="0" role="presentation">
-                    <tr><td style="background:#e8552a;width:6px;height:6px;border-radius:3px;font-size:0;line-height:0;margin-top:5px;">&nbsp;</td></tr>
-                  </table>
+                <td style="width:32px;vertical-align:top;padding-top:2px;">
+                  <div style="width:24px;height:24px;background:#f9fafb;border-radius:6px;text-align:center;line-height:24px;font-size:12px;">→</div>
                 </td>
-                <td style="padding-left:10px;">
-                  <span style="color:#334155;font-size:14px;line-height:1.55;">Análisis técnicos de proyectos reales</span>
+                <td style="padding-left:12px;vertical-align:middle;">
+                  <span style="color:#111111;font-size:14px;font-weight:600;">Frameworks de decisión para webs de negocio</span>
                 </td>
               </tr>
             </table>
+          </td>
+        </tr>
 
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:8px;">
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" role="presentation">
               <tr>
-                <td width="20" style="vertical-align:top;padding-top:1px;">
-                  <table cellpadding="0" cellspacing="0" role="presentation">
-                    <tr><td style="background:#e8552a;width:6px;height:6px;border-radius:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
-                  </table>
+                <td style="width:32px;vertical-align:top;padding-top:2px;">
+                  <div style="width:24px;height:24px;background:#f9fafb;border-radius:6px;text-align:center;line-height:24px;font-size:12px;">→</div>
                 </td>
-                <td style="padding-left:10px;">
-                  <span style="color:#334155;font-size:14px;line-height:1.55;">Frameworks de decisión para webs de negocio</span>
+                <td style="padding-left:12px;vertical-align:middle;">
+                  <span style="color:#111111;font-size:14px;font-weight:600;">SEO y conversión sin teoría vacía</span>
                 </td>
               </tr>
             </table>
+          </td>
+        </tr>
 
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-              <tr>
-                <td width="20" style="vertical-align:top;padding-top:1px;">
-                  <table cellpadding="0" cellspacing="0" role="presentation">
-                    <tr><td style="background:#e8552a;width:6px;height:6px;border-radius:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
-                  </table>
-                </td>
-                <td style="padding-left:10px;">
-                  <span style="color:#334155;font-size:14px;line-height:1.55;">Estrategia SEO y conversión sin teoría vacía</span>
-                </td>
-              </tr>
-            </table>
+      </table>
 
+      <p style="margin:0 0 8px;color:#6b7280;font-size:14px;line-height:1.7;">Periodicidad: cuando haya algo que valga la pena. Sin spam.</p>
+      <p style="margin:0 0 36px;color:#6b7280;font-size:14px;line-height:1.7;">Si en algún momento quieres trabajar con nosotros, sabes dónde encontrarnos.</p>
+
+      <!-- SIGNATURE -->
+      <table cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td style="vertical-align:middle;padding-right:14px;">
+            <div style="width:44px;height:44px;background:#111111;border-radius:50%;text-align:center;line-height:44px;font-size:16px;font-weight:800;color:#fff;display:inline-block;">J</div>
+          </td>
+          <td style="vertical-align:middle;">
+            <p style="margin:0;color:#111111;font-size:14px;font-weight:700;">Jordi · WebsCrafting</p>
+            <p style="margin:2px 0 0;color:#9ca3af;font-size:12px;">webscrafting.com</p>
           </td>
         </tr>
       </table>
-
-      <p style="margin:0 0 8px;color:#475569;font-size:14px;line-height:1.65;">
-        Periodicidad: cuando haya algo que valga la pena enviar. Sin spam.
-      </p>
-      <p style="margin:0 0 26px;color:#475569;font-size:14px;line-height:1.65;">
-        Si en algún momento quieres trabajar con nosotros, sabes dónde encontrarnos.
-      </p>
-
-      <p style="margin:0;color:#0a1628;font-size:14px;font-weight:700;">Jordi &middot; WebsCrafting</p>
 
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="background:#0a1628;padding:18px 40px;border-radius:0 0 8px 8px;">
+    <td style="background:#111111;padding:24px 48px;border-radius:0 0 16px 16px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
           <td>
-            <p style="margin:0 0 3px;color:#fff;opacity:0.7;font-size:12px;">
-              <a href="${SITE_URL}" style="color:#e8552a;text-decoration:none;">webscrafting.com</a>
-              &nbsp;&middot;&nbsp;
-              <a href="mailto:info@webscrafting.com" style="color:#fff;opacity:0.55;text-decoration:none;">info@webscrafting.com</a>
-            </p>
-            <p style="margin:0;color:#fff;opacity:0.3;font-size:11px;">Madrid, España</p>
+            <a href="${SITE_URL}" style="color:#e8552a;font-size:12px;text-decoration:none;font-weight:600;">webscrafting.com</a>
+            <span style="color:#374151;font-size:12px;"> &nbsp;·&nbsp; Madrid, España</span>
           </td>
-        </tr>
-        <tr>
-          <td style="padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);margin-top:14px;">
-            <p style="margin:6px 0 0;color:#fff;opacity:0.25;font-size:11px;line-height:1.6;">
-              Recibiste este correo porque te suscribiste en webscrafting.com.<br>
-              <a href="${esc(unsubUrl)}" style="color:#fff;opacity:0.4;font-size:11px;text-decoration:underline;">Cancelar suscripción</a>
-            </p>
+          <td align="right">
+            <a href="${esc(unsubUrl)}" style="color:#4b5563;font-size:11px;text-decoration:underline;">Cancelar suscripción</a>
           </td>
         </tr>
       </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" style="padding:20px 0 0;">
+      <p style="margin:0;color:#9ca3af;font-size:11px;">Recibiste este correo porque te suscribiste en webscrafting.com</p>
     </td>
   </tr>
 
@@ -485,40 +467,64 @@ function buildNewsletterWelcomeHtml(data) {
 </td></tr>
 </table>
 </body>
-</html>`;
+</html>`
 }
 
-// ─── Funciones de envío públicas ─────────────────────────────────────────────
+// ─── Funciones de envío ───────────────────────────────────────────────────────
 
 export async function sendLeadNotification(data) {
+  const serviceLabel = SERVICE_LABELS[data.service] || data.service
   const { error } = await resend.emails.send({
-    from: `WebsCrafting Sistema <${FROM_EMAIL}>`,
+    from: `WebsCrafting <${FROM_EMAIL}>`,
     to: [ADMIN_EMAIL],
-    subject: `[Lead] ${data.name} — ${SERVICE_LABELS[data.service] || data.service}`,
+    subject: `${data.name} quiere hablar de ${serviceLabel}`,
+    tags: [{ name: 'tipo', value: 'lead-contacto' }],
     html: buildLeadNotificationHtml(data),
-  });
-  if (error)
-    throw new Error(`Resend error (lead notification): ${error.message}`);
+  })
+  if (error) throw new Error(`Resend (lead): ${error.message}`)
+
+  if (AUDIENCE_LEADS) {
+    const [firstName, ...rest] = data.name.trim().split(' ')
+    await resend.contacts.create({
+      audienceId: AUDIENCE_LEADS,
+      email: data.email,
+      firstName,
+      lastName: rest.join(' ') || undefined,
+      unsubscribed: false,
+    }).catch((err) => console.error('[audience leads]', err.message))
+  }
 }
 
 export async function sendContactAutoReply(data) {
+  const firstName = data.name.trim().split(' ')[0]
   const { error } = await resend.emails.send({
-    from: `WebsCrafting <${FROM_EMAIL}>`,
+    from: `Jordi de WebsCrafting <${FROM_EMAIL}>`,
     to: [data.email],
     replyTo: FROM_EMAIL,
-    subject: "Tu solicitud en WebsCrafting — En análisis",
+    subject: `${firstName}, hemos recibido tu solicitud`,
+    tags: [{ name: 'tipo', value: 'lead-autoreply' }],
     html: buildContactAutoReplyHtml(data),
-  });
-  if (error) throw new Error(`Resend error (auto-reply): ${error.message}`);
+  })
+  if (error) throw new Error(`Resend (auto-reply): ${error.message}`)
 }
 
 export async function sendNewsletterWelcome(data) {
   const { error } = await resend.emails.send({
-    from: `WebsCrafting <${FROM_EMAIL}>`,
+    from: `Jordi de WebsCrafting <${FROM_EMAIL}>`,
     to: [data.email],
     replyTo: FROM_EMAIL,
-    subject: "Dentro. Nada de relleno. — WebsCrafting",
+    subject: 'Ya estás dentro. Bienvenido.',
+    tags: [{ name: 'tipo', value: 'newsletter-bienvenida' }],
     html: buildNewsletterWelcomeHtml(data),
-  });
-  if (error) throw new Error(`Resend error (newsletter): ${error.message}`);
+  })
+  if (error) throw new Error(`Resend (newsletter): ${error.message}`)
+
+  if (AUDIENCE_NEWSLETTER) {
+    await resend.contacts.create({
+      audienceId: AUDIENCE_NEWSLETTER,
+      email: data.email,
+      firstName: data.name || undefined,
+      unsubscribed: false,
+    }).catch((err) => console.error('[audience newsletter]', err.message))
+  }
 }
